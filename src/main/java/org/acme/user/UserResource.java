@@ -77,7 +77,7 @@ public class UserResource {
     @Path("/{id}")
     public Response deleteUser(@PathParam("id") Long id) {
 
-        // robotService.delete(id);
+        userService.deleteUser(id);
         return Response.noContent().build();
     }
 }

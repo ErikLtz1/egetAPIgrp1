@@ -15,6 +15,7 @@ public class Developer {
     private Long id;
     private UUID apiKey;
     private String email;
+    private String password;
 
     public Long getId() {
         return id;
@@ -33,6 +34,12 @@ public class Developer {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
     
 }

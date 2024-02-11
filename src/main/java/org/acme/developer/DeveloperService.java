@@ -3,8 +3,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
-import java.util.Base64;
-// import jakarta.security.enterprise.identitystore.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,12 +32,32 @@ public class DeveloperService {
         return em.find(Developer.class, id);
     }
 
-    public Developer findEmail(String email) {
-        return em.find(Developer.class, email);
+    public Developer findDeveloperByEmail(String email) {
+        return em.createQuery("SELECT d FROM Developer d WHERE d.email LIKE :email", Developer.class)
+        .setParameter("email", email).getSingleResult();
     }
 
     public Long countDevelopers() {
         return em.createQuery("SELECT COUNT(d) FROM Developer d", Long.class).getSingleResult(); 
+    }
+
+    public String deleteDeveloper(String email, UUID apiKey, String password) {
+        Developer developer = em.createQuery("SELECT d FROM Developer d WHERE d.email LIKE :email", Developer.class)
+        .setParameter("email", email).getSingleResult();
+
+        String salt = developer.getSalt();
+        String securePassword = getSecurePassword(password, salt);
+        
+        String message;
+
+        if(email.equals(developer.getEmail()) && apiKey.equals(developer.getApiKey()) && securePassword.equals(developer.getPassword())) {
+            deleteDeveloper(developer.getId());
+            message = "Developer raderad!";
+        } else {
+            message = "Developer inte raderad! Något matchar inte!";
+        }
+
+        return message;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -48,8 +66,22 @@ public class DeveloperService {
         String salt = getSalt();
         String securePassword = getSecurePassword(developer.getPassword(), salt);
         developer.setPassword(securePassword);
+        developer.setSalt(salt);
         em.persist(developer);
         return developer;
+    }
+
+    public boolean getDevelopersApiKey(UUID apiKey) {
+
+        List<Developer> developers = em.createQuery("SELECT d FROM Developer d", Developer.class).getResultList();
+        for (Developer developer: developers)  {
+            if (developer.getApiKey().equals(apiKey)) {
+                return true;
+             }
+        }
+        
+        return false;
+        
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -60,36 +92,25 @@ public class DeveloperService {
     private static String getSalt()
             throws NoSuchAlgorithmException, NoSuchProviderException 
     {
-        // Always use a SecureRandom generator
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
 
-        // Create array for salt
         byte[] salt = new byte[16];
 
-        // Get a random salt
         sr.nextBytes(salt);
-
-        // return salt
+        
         return salt.toString();
     }
 
     
-    private static String getSecurePassword(String passwordToHash,
-
-            String salt) {
+    private static String getSecurePassword(String passwordToHash, String salt) {
         String generatedPassword = null;
         try {
-            // Create MessageDigest instance for MD5
             MessageDigest md = MessageDigest.getInstance("MD5");
 
-            // Add password bytes to digest
             md.update(salt.getBytes());
 
-            // Get the hash's bytes
             byte[] bytes = md.digest(passwordToHash.getBytes());
 
-            // This bytes[] has bytes in decimal format;
-            // Convert it to hexadecimal format
             StringBuilder sb = new StringBuilder();
 
             for (int i = 0; i < bytes.length; i++) {
@@ -97,7 +118,6 @@ public class DeveloperService {
                         .substring(1));
             }
 
-            // Get complete hashed password in hex format
             generatedPassword = sb.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

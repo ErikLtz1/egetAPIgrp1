@@ -4,7 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import org.acme.developer.DeveloperService;
 import org.acme.post.Post;
 import org.acme.post.PostService;
 
@@ -29,6 +31,8 @@ public class UserResource {
 
     @Inject
     UserService userService;
+    @Inject
+    DeveloperService developerService;
 
     @GET
     public Response getUsers() {
@@ -63,14 +67,17 @@ public class UserResource {
     }
 
     @POST // När vi anropar post endpoints så tar vi emot ett paket som vi skickar i våran
-          // post och det innehåller det vi specat
-    public Response createUser(@Valid User user) throws URISyntaxException { // Felhanterar
+    @Path("/{apiKey}")      // post och det innehåller det vi specat
+    public Response createUser(@Valid User user, @PathParam("apiKey") UUID apiKey) throws URISyntaxException { // Felhanterar
 
-        // ger id till robot
-        user = userService.createUser(user);
+        if (developerService.getDevelopersApiKey(apiKey)) {
+            user = userService.createUser(user);
+    
+            URI createdUri = new URI(user.getId().toString()); // Addressen till resursen
+            return Response.created(createdUri).entity(user).build(); // Skickar tbx det objektet vi har skapat
+        } 
 
-        URI createdUri = new URI(user.getId().toString()); // Addressen till resursen
-        return Response.created(createdUri).entity(user).build(); // Skickar tbx det objektet vi har skapat
+        return Response.status(403).build();
     }
 
     @DELETE

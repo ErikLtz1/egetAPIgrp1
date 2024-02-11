@@ -10,6 +10,7 @@
         apiKey uuid,
         email varchar(255),
         password varchar(255),
+        salt varchar(255),
         primary key (id)
     );
 

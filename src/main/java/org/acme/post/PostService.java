@@ -6,6 +6,7 @@ import java.util.UUID;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Transactional(Transactional.TxType.SUPPORTS)
@@ -31,14 +32,35 @@ public class PostService {
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public Post createPost(Post post) {
-        post.setPostUserUUid(UUID.randomUUID());
+    public Post createPost(Post post, UUID userUUID) {
+        post.setPostUserUUID(userUUID);
         em.persist(post);
         return post;
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
-    public void deletePost(Long id) {
-        em.remove(em.getReference(Post.class, id));
-    } 
+    public void deletePost(Long id, UUID userUUID) {
+    Post post = em.find(Post.class, id);
+    if (post != null && post.getPostUserUUID().equals(userUUID)) {
+        em.remove(post);
+    } else {
+        
+        throw new EntityNotFoundException("Post not found or does not belong to the user");
+    }
+    }
+
+    // @Transactional(Transactional.TxType.REQUIRED)
+    // public void editPost(UUID userUUID, Long id, Post editedPost) {
+    //     Post post = em.find(Post.class, id);
+    //     if (post != null && post.getPostUserUUID().equals(userUUID)) {
+    //         post.setImgUrl(editedPost.getImgUrl());
+    //         post.setName(editedPost.getName());
+    //         post.setPrice(editedPost.getPrice());
+    //         em.merge(editedPost);
+    //     } else {
+            
+    //         throw new EntityNotFoundException("Post not found or does not belong to the user");
+    //     }
+    // }
+
 }

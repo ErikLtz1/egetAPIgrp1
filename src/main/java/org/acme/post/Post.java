@@ -13,7 +13,7 @@ public class Post {
     @Id
     @GeneratedValue
     private Long id;
-    private UUID postUserUUid;
+    private UUID postUserUUID;
     private String imgUrl;
     private String name;
     private double price;
@@ -24,11 +24,12 @@ public class Post {
     public void setId(Long id) {
         this.id = id;
     }
-    public UUID getPostUserUUid() {
-        return postUserUUid;
+    public UUID getPostUserUUID() {
+        return postUserUUID;
     }
-    public void setPostUserUUid(UUID postUserUUid) {
-        this.postUserUUid = postUserUUid;
+    public void setPostUserUUID(UUID postUserUUID) {
+        this.postUserUUID = postUserUUID;
+        // return postUserUUID;
     }
     public String getImgUrl() {
         return imgUrl;

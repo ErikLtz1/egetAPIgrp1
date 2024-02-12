@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.UUID;
 
 import org.acme.developer.DeveloperService;
+import org.acme.user.UserService;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -31,6 +34,8 @@ public class PostResource {
     PostService postService;
     @Inject
     DeveloperService developerService;
+    @Inject
+    UserService userService;
 
     @GET
     
@@ -70,27 +75,46 @@ public class PostResource {
         }
     }
 
-    @POST //När vi anropar post endpoints så tar vi emot ett paket som vi skickar i våran post och det innehåller det vi specat
-    public Response createPost(@Valid Post post, @PathParam("apikey") UUID apikey) throws URISyntaxException { //Felhanterar
+    @POST
+    @Path("/{userUUID}")
+    public Response createPost(@Valid Post post, @PathParam("apikey") UUID apikey, @PathParam("userUUID") UUID userUUID) throws URISyntaxException {
+        
         if (developerService.getDevelopersApiKey(apikey)) {
-            post = postService.createPost(post);
-            URI createdUri = new URI(post.getId().toString()); //Addressen till resursen
-            return Response.created(createdUri).entity(post).build(); //Skickar tbx det objektet vi har skapat
+            post = postService.createPost(post, userUUID);
+            // Tilldela användarens UUID till posten
+            post.setPostUserUUID(userUUID);
+            URI createdUri = new URI(post.getId().toString()); // Addressen till resursen
+            return Response.created(createdUri).entity(post).build(); // Skickar tbx det objektet vi har skapat
         } else {
             return Response.status(403).build();
-        }  
+        }
     }
+   
 
     @DELETE
-    @Path("/{id}")
-    public Response deletePost(@PathParam("id") @Min(1) Long id, @PathParam ("apikey") UUID apikey) {
+    @Path("/{userUUID}/{id}")
+    public Response deletePost(@PathParam("id") @Min(1) Long id, @PathParam("apikey") UUID apikey,
+            @PathParam("userUUID") UUID userUUID) {
         if (developerService.getDevelopersApiKey(apikey)) {
-            postService.deletePost(id);
+            postService.deletePost(id, userUUID);
             return Response.ok(id).build();
         } else {
             return Response.status(403).build();
         }
-        //TODO felhantering 500
+        // TODO felhantering 500
     }
+
+    // @PATCH
+    // @Path("/{userUUID}/edit/{id}")
+    // public Response editPost(@PathParam("id") Long id, @PathParam("apikey") UUID apikey, 
+    // @PathParam("userUUID") UUID userUUID, @Valid Post post) {
+    //     if (developerService.getDevelopersApiKey(apikey)) {
+    //         postService.editPost(userUUID, id, post);
+    //         return Response.ok(id).build();
+    //     } else {
+    //         return Response.status(403).build();
+    //     }
+    // }
 }
+    
 

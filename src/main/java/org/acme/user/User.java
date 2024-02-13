@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "t_user")
@@ -14,7 +15,9 @@ public class User {
     @GeneratedValue
     private Long id;
     private UUID userUUID;
+    @NotEmpty(message = "Du måste ange ett användarnamn.")
     private String username;
+    @NotEmpty(message = "Du måste ange ett lösenord.")
     private String password;
 
     public UUID getUserUUID() {

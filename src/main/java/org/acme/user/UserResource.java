@@ -9,6 +9,8 @@ import java.util.UUID;
 import org.acme.developer.DeveloperService;
 import org.acme.post.Post;
 import org.acme.post.PostService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -35,6 +37,15 @@ public class UserResource {
     DeveloperService developerService;
 
     @GET
+    @Operation(summary ="Hämtning av användare", description = "Utvecklare kan hämta alla användare ifrån databasen")
+    @APIResponse(
+        responseCode = "200",
+        description = "Lyckad hämtning av användare" 
+    )
+    @APIResponse(
+        responseCode = "400",
+        description = "Användarnamn eller lösenord saknas" 
+    )
     public Response getUsers(@PathParam("apikey") UUID apikey) {
 
         if (developerService.getDevelopersApiKey(apikey)) {
@@ -46,6 +57,15 @@ public class UserResource {
     }
 
     @GET
+    @Operation(summary ="Hämta specifik användare", description = "Utvecklare kan hämta en specifik user från databasen")
+    @APIResponse(
+        responseCode = "200",
+        description = "Lyckad hämtning av användare" 
+    )
+    @APIResponse(
+        responseCode = "400",
+        description = "Användarnamn eller lösenord saknas" 
+    )
     @Path("/{id}")
     public Response getUsersById(@PathParam("id") Long id, @PathParam("apikey") UUID apikey) {
 
@@ -58,6 +78,15 @@ public class UserResource {
     }
 
     @GET
+    @Operation(summary ="Hämta antal användare", description = "Utvecklare kan hämta antalet användare från databasen")
+    @APIResponse(
+        responseCode = "200",
+        description = "Lyckad hämtning av antal användare" 
+    )
+    @APIResponse(
+        responseCode = "403",
+        description = "Behörighet saknas" 
+    )
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/count")
     public Response countUsers(@PathParam("apikey") UUID apikey) {
@@ -71,6 +100,15 @@ public class UserResource {
     }
 
     @POST // När vi anropar post endpoints så tar vi emot ett paket som vi skickar i våran
+    @Operation(summary ="Registrering av användare", description = "Användare skapar konto för att få mer behörighet på sidan")
+    @APIResponse(
+        responseCode = "201",
+        description = "Lyckad registrering" 
+    )
+    @APIResponse(
+        responseCode = "400",
+        description = "Användarnamn eller lösenord saknas" 
+    )
     @Path("/")      // post och det innehåller det vi specat
     public Response createUser(@Valid User user, @PathParam("apikey") UUID apikey) throws URISyntaxException { // Felhanterar
 

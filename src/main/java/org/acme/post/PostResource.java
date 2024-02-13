@@ -8,6 +8,8 @@ import java.util.UUID;
 
 import org.acme.developer.DeveloperService;
 import org.acme.user.UserService;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityNotFoundException;
@@ -38,7 +40,15 @@ public class PostResource {
     UserService userService;
 
     @GET
-    
+    @Operation(summary ="Visar alla inlägg", description = "Användare som har ett konto kan visa alla inlägg som finns")
+    @APIResponse(
+        responseCode = "201",
+        description = "Lyckad hämtning av alla inlägg" 
+    )
+    @APIResponse(
+        responseCode = "403",
+        description = "Åtkomst nekad" 
+    )
     public Response getPosts(@PathParam("apikey") UUID apikey) {
         if (developerService.getDevelopersApiKey(apikey)) {
             List<Post> posts = postService.findAll();
@@ -76,6 +86,24 @@ public class PostResource {
     }
 
     @POST
+    @Operation(summary ="Skapande av inlägg", description = "Användare som har ett konto kan skapa ett inlägg")
+    @APIResponse(
+        responseCode = "201",
+        description = "Lyckat skapande av inlägg" 
+    )
+    @APIResponse(
+        responseCode = "400",
+        description = "Priset finns ej eller är för lågt eller saknas ett namn" 
+    )
+    @APIResponse(
+        responseCode = "403",
+        description = "Åtkomst nekad" 
+    )
+    @APIResponse(
+        responseCode = "404",
+        description = "Felaktig URL" 
+    )
+    
     @Path("/{userUUID}")
     public Response createPost(@Valid Post post, @PathParam("apikey") UUID apikey, @PathParam("userUUID") UUID userUUID) throws URISyntaxException {
         
@@ -104,17 +132,17 @@ public class PostResource {
         // TODO felhantering 500
     }
 
-    // @PATCH
-    // @Path("/{userUUID}/edit/{id}")
-    // public Response editPost(@PathParam("id") Long id, @PathParam("apikey") UUID apikey, 
-    // @PathParam("userUUID") UUID userUUID, @Valid Post post) {
-    //     if (developerService.getDevelopersApiKey(apikey)) {
-    //         postService.editPost(userUUID, id, post);
-    //         return Response.ok(id).build();
-    //     } else {
-    //         return Response.status(403).build();
-    //     }
-    // }
+    @PATCH
+    @Path("/{userUUID}/edit/{id}")
+    public Response editPost(@Valid Post post, @PathParam("id") Long id, @PathParam("apikey") UUID apikey, 
+    @PathParam("userUUID") UUID userUUID) {
+        if (developerService.getDevelopersApiKey(apikey)) {
+            postService.editPost(userUUID, id, post);
+            return Response.ok(id).build();
+        } else {
+            return Response.status(403).build();
+        }
+    }
 }
     
 

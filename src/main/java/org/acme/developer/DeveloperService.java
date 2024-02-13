@@ -62,6 +62,7 @@ public class DeveloperService {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public Developer createDeveloper(Developer developer) throws NoSuchAlgorithmException, NoSuchProviderException {
+        
         developer.setApiKey(UUID.randomUUID());
         String salt = getSalt();
         String securePassword = getSecurePassword(developer.getPassword(), salt);

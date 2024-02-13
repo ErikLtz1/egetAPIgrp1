@@ -44,9 +44,14 @@ public class DeveloperResource {
         responseCode = "403",
         description = "Ingen behörighet" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     @Path ("/developers")
     public Response getDevelopers(@Valid Admin loginAdmin) {
 
+      try {
         if (loginAdmin.getUsername().equals(admin.getUsername()) && loginAdmin.getPassword().equals(admin.getPassword())) {
             List<Developer> developers = developerService.findAll();
 
@@ -61,6 +66,9 @@ public class DeveloperResource {
             return Response.status(403).build();
 
         }
+      } catch (Exception e) {
+        return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+      }
     
         
     }
@@ -75,16 +83,25 @@ public class DeveloperResource {
         responseCode = "403",
         description = "Ingen behörighet" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     @Path("/{id}")
     public Response getDevelopersById(@PathParam("id") Long id, @Valid Admin loginAdmin) {
 
-        if (loginAdmin.getUsername().equals(admin.getUsername()) && loginAdmin.getPassword().equals(admin.getPassword())) {
-            return Response.ok(developerService.find(id)).build();
+        try {
 
-        } else {
-
-            return Response.status(403).build();
-            
+            if (loginAdmin.getUsername().equals(admin.getUsername()) && loginAdmin.getPassword().equals(admin.getPassword())) {
+                return Response.ok(developerService.find(id)).build();
+    
+            } else {
+    
+                return Response.status(403).build();
+                
+            }
+        } catch (Exception e) {
+            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
         }
 
     
@@ -101,17 +118,27 @@ public class DeveloperResource {
         responseCode = "403",
         description = "Ingen behörighet" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/count")
     public Response countDevelopers(@Valid Admin loginAdmin) {
-        if (loginAdmin.getUsername().equals(admin.getUsername()) && loginAdmin.getPassword().equals(admin.getPassword())) {
+
+        try {
+
+            if (loginAdmin.getUsername().equals(admin.getUsername()) && loginAdmin.getPassword().equals(admin.getPassword())) {
+        
+                return Response.ok(developerService.countDevelopers()).build();
     
-            return Response.ok(developerService.countDevelopers()).build();
-
-        } else {
-
-            return Response.status(403).build();
-            
+            } else {
+    
+                return Response.status(403).build();
+                
+            }
+        } catch (Exception e) {
+            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
         }
 
         
@@ -127,12 +154,20 @@ public class DeveloperResource {
         responseCode = "400",
         description = "Email eller lösenord saknas" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     public Response createDeveloper(@Valid Developer developer) throws URISyntaxException, NoSuchAlgorithmException, NoSuchProviderException { //Felhanterar
 
-        developer = developerService.createDeveloper(developer);
+        try {
+            developer = developerService.createDeveloper(developer);
 
         URI createdUri = new URI(developer.getId().toString()); //Addressen till resursen
         return Response.created(createdUri).entity(developer).build(); //Skickar tbx det objektet vi har skapat
+        } catch (Exception e) {
+            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+        }
     }
 
     @DELETE

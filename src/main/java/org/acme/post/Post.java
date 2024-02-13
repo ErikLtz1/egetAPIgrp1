@@ -6,6 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "t_post")
@@ -14,8 +17,12 @@ public class Post {
     @GeneratedValue
     private Long id;
     private UUID postUserUUID;
+    @NotNull
     private String imgUrl;
+    @NotEmpty(message = "Du måste ange ett namn.")
     private String name;
+    @Min(value = 1, message = "Value must be greater than or equal to 1")
+    
     private double price;
     
     public Long getId() {

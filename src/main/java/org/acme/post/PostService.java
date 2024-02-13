@@ -1,35 +1,29 @@
 package org.acme.post;
 
-import java.util.List;
-import java.util.UUID;
-
+import java.util.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.core.Response;
 
 @Transactional(Transactional.TxType.SUPPORTS)
 @ApplicationScoped
 public class PostService {
-
-
     @Inject
     EntityManager em;
     UUID uuid;
 
     public List<Post> findAll() {
-    List<Post> posts = em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
-    return posts;
+        return em.createQuery("SELECT p FROM Post p", Post.class).getResultList();
     }
 
     public Post find(Long id) {
         return em.find(Post.class, id);
-    } 
+    }
 
     public Long countPosts() {
-        return em.createQuery("SELECT COUNT(p) FROM Post p", Long.class).getSingleResult(); 
+        return em.createQuery("SELECT COUNT(p) FROM Post p", Long.class).getSingleResult();
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -41,13 +35,13 @@ public class PostService {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public void deletePost(Long id, UUID userUUID) {
-    Post post = em.find(Post.class, id);
-    if (post != null && post.getPostUserUUID().equals(userUUID)) {
-        em.remove(post);
-    } else {
-        
-        throw new EntityNotFoundException("Post not found or does not belong to the user");
-    }
+        Post post = em.find(Post.class, id);
+        if (post != null && post.getPostUserUUID().equals(userUUID)) {
+            em.remove(post);
+        } else {
+
+            throw new EntityNotFoundException("Post not found or does not belong to the user");
+        }
     }
 
     @Transactional(Transactional.TxType.REQUIRED)
@@ -57,9 +51,7 @@ public class PostService {
             post.setImgUrl(editedPost.getImgUrl());
             post.setName(editedPost.getName());
             post.setPrice(editedPost.getPrice());
-            // em.persist(editedPost);
         } else {
-            
             throw new EntityNotFoundException("Post not found or does not belong to the user");
         }
     }

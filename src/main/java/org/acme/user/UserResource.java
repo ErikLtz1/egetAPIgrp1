@@ -46,14 +46,23 @@ public class UserResource {
         responseCode = "400",
         description = "Användarnamn eller lösenord saknas" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     public Response getUsers(@PathParam("apikey") UUID apikey) {
 
-        if (developerService.getDevelopersApiKey(apikey)) {
-            List<User> users = userService.findAll();
-            return Response.ok(users).build();
-        } else {
-            return Response.status(403).build();
-        } 
+        try {
+
+            if (developerService.getDevelopersApiKey(apikey)) {
+                List<User> users = userService.findAll();
+                return Response.ok(users).build();
+            } else {
+                return Response.status(403).build();
+            } 
+        } catch (Exception e) {
+            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+        }
     }
 
     @GET
@@ -66,14 +75,23 @@ public class UserResource {
         responseCode = "400",
         description = "Användarnamn eller lösenord saknas" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     @Path("/{id}")
     public Response getUsersById(@PathParam("id") Long id, @PathParam("apikey") UUID apikey) {
 
-        if (developerService.getDevelopersApiKey(apikey)) {
-            User user = userService.find(id);
-            return Response.ok(user).build();
-        } else {
-            return Response.status(403).build();
+        try {
+
+            if (developerService.getDevelopersApiKey(apikey)) {
+                User user = userService.find(id);
+                return Response.ok(user).build();
+            } else {
+                return Response.status(403).build();
+            }
+        } catch (Exception e) {
+            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
         }
     }
 
@@ -87,16 +105,24 @@ public class UserResource {
         responseCode = "403",
         description = "Behörighet saknas" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/count")
     public Response countUsers(@PathParam("apikey") UUID apikey) {
+        try {
 
-        if (developerService.getDevelopersApiKey(apikey)) {
-            Long count = userService.countUsers();
-            return Response.ok(count).build();
-        } else {
-            return Response.status(403).build();
-        }    
+            if (developerService.getDevelopersApiKey(apikey)) {
+                Long count = userService.countUsers();
+                return Response.ok(count).build();
+            } else {
+                return Response.status(403).build();
+            }    
+        } catch (Exception e) {
+            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+        }
     }
 
     @POST // När vi anropar post endpoints så tar vi emot ett paket som vi skickar i våran
@@ -109,9 +135,14 @@ public class UserResource {
         responseCode = "400",
         description = "Användarnamn eller lösenord saknas" 
     )
+    @APIResponse(
+        responseCode = "500",
+        description = "Något felaktigt i URL" 
+    )
     @Path("/")      // post och det innehåller det vi specat
     public Response createUser(@Valid User user, @PathParam("apikey") UUID apikey) throws URISyntaxException { // Felhanterar
 
+      try {
         if (developerService.getDevelopersApiKey(apikey)) {
             user = userService.createUser(user);
     
@@ -119,7 +150,10 @@ public class UserResource {
             return Response.created(createdUri).entity(user).build(); // Skickar tbx det objektet vi har skapat
         } 
         return Response.status(403).build();
+    } catch (Exception e) {
+        return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
     }
+      }
 
     @DELETE
     @Path("/{id}")

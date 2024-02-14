@@ -34,7 +34,7 @@ public class DeveloperResource {
                 return Response.status(403).build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -51,7 +51,7 @@ public class DeveloperResource {
                             ? Response.ok(developerService.find(id)).build()
                             : Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -69,7 +69,7 @@ public class DeveloperResource {
                             ? Response.ok(developerService.countDevelopers()).build()
                             : Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -87,7 +87,7 @@ public class DeveloperResource {
             URI createdUri = new URI(developer.getId().toString()); // Addressen till resursen
             return Response.created(createdUri).entity(developer).build(); // Skickar tbx det objektet vi har skapat
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 

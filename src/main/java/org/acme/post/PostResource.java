@@ -37,7 +37,7 @@ public class PostResource {
                 return Response.status(403).build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -57,7 +57,7 @@ public class PostResource {
                 return Response.status(403).build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -74,7 +74,7 @@ public class PostResource {
             return developerService.getDevelopersApiKey(apikey) ? Response.ok(postService.countPosts()).build()
                     : Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -98,7 +98,7 @@ public class PostResource {
                 return Response.status(403).build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -125,7 +125,7 @@ public class PostResource {
                 return Response.status(403).build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
 
     }
@@ -151,7 +151,7 @@ public class PostResource {
                 return Response.status(403).build();
             }
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 }

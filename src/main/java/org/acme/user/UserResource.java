@@ -29,7 +29,7 @@ public class UserResource {
             return developerService.getDevelopersApiKey(apikey) ? Response.ok(userService.findAll()).build()
                     : Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -44,7 +44,7 @@ public class UserResource {
             return developerService.getDevelopersApiKey(apikey) ? Response.ok(userService.find(id)).build()
                     : Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -60,7 +60,7 @@ public class UserResource {
             return developerService.getDevelopersApiKey(apikey) ? Response.ok(userService.countUsers()).build()
                     : Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 
@@ -79,7 +79,7 @@ public class UserResource {
             }
             return Response.status(403).build();
         } catch (Exception e) {
-            return Response.status(500).entity("Ett fel uppstod vid redigering av inlägget").build();
+            return Response.status(500).build();
         }
     }
 

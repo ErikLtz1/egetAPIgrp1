@@ -83,14 +83,14 @@ public class UserResource {
         }
     }
 
-    @DELETE
-    @Path("/{id}")
-    public Response deleteUser(@PathParam("id") Long id, @PathParam("apikey") UUID apikey) {
-        if (developerService.getDevelopersApiKey(apikey)) {
-            userService.deleteUser(id);
-            return Response.ok(id).build();
-        } else {
-            return Response.status(403).build();
-        }
-    }
+    // @DELETE
+    // @Path("/{id}")
+    // public Response deleteUser(@PathParam("id") Long id, @PathParam("apikey") UUID apikey) {
+    //     if (developerService.getDevelopersApiKey(apikey)) {
+    //         userService.deleteUser(id);
+    //         return Response.ok(id).build();
+    //     } else {
+    //         return Response.status(403).build();
+    //     }
+    // }
 }

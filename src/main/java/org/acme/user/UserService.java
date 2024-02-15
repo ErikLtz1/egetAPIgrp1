@@ -32,10 +32,10 @@ public class UserService {
         return user;
     }
 
-    @Transactional(Transactional.TxType.REQUIRED)
-    public void deleteUser(Long id) {
-        em.remove(em.getReference(User.class, id));
-    }
+    // @Transactional(Transactional.TxType.REQUIRED)
+    // public void deleteUser(Long id) {
+    //     em.remove(em.getReference(User.class, id));
+    // }
 
     public User getUserUUID(UUID userUUID) {
         return em.find(User.class, userUUID);
